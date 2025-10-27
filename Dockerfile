@@ -1,13 +1,13 @@
 # Stage 1: Build the Application
-# Use a Java base image with a JDK to compile the code
-FROM openjdk:17-jdk-slim AS builder
+# --- FIX: Change base image to one that includes Maven ---
+FROM maven:3.9.6-openjdk-17-slim AS builder
 
 # Set the working directory inside the container
 WORKDIR /app
 
 # Copy the build file (pom.xml) and download dependencies
 COPY pom.xml .
-# Use a hack to download all dependencies first (improves build speed by caching layers)
+# Download dependencies to a cached layer (Maven is now available)
 RUN mvn dependency:go-offline
 
 # Copy the rest of the source code
@@ -17,19 +17,17 @@ COPY src ./src
 RUN mvn package -DskipTests
 
 # Stage 2: Create the Final, Lightweight Runtime Image
-# Use a smaller JRE-only base image for production
+# Use a JRE-only base image for production
 FROM openjdk:17-jre-slim
 
 # Set the working directory
 WORKDIR /app
 
 # Copy the built JAR from the builder stage
-# The JAR file typically follows the format: target/appname-version.jar
-# You'll need to check your exact JAR name. We'll use app.jar as a placeholder.
 COPY --from=builder /app/target/*.jar /app/app.jar
 
-# Define the default port the application will run on (optional, but good practice)
+# Application port
 EXPOSE 8080
 
-# Define the entry point to run the application
+# Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
