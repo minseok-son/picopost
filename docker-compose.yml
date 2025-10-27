@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  # 1. PostgreSQL Database Service
+  db:
+    image: postgres:14-alpine # Use a lightweight PostgreSQL image
+    container_name: picopost_db
+    environment:
+      # These must match the settings in your application.properties
+      POSTGRES_DB: picopost_db
+      POSTGRES_USER: picopost_user
+      POSTGRES_PASSWORD: mysecretpassword
+    # Map container port 5432 to host port 5432 (optional for local access)
+    ports:
+      - "5432:5432"
+    volumes:
+      # Persist data so it survives container restarts
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - picopost_network
+
+  # 2. Spring Boot Application Service
+  app:
+    build:
+      context: . # Build using the Dockerfile in the current directory
+      dockerfile: Dockerfile
+    container_name: picopost_app
+    ports:
+      - "8080:8080" # Map container port 8080 to host port 8080
+    environment:
+      # Configure Spring to connect to the database container using its service name ('db')
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/picopost_db
+      SPRING_DATASOURCE_USERNAME: picopost_user
+      SPRING_DATASOURCE_PASSWORD: mysecretpassword
+      # Ensure Spring uses the correct dialect/driver
+      SPRING_JPA_DATABASE-PLATFORM: org.hibernate.dialect.PostgreSQLDialect
+    depends_on:
+      - db # Ensure the DB container starts before the app container
+    networks:
+      - picopost_network
+
+# Define volumes for persistent storage
+volumes:
+  db_data:
+
+# Define the network for communication
+networks:
+  picopost_network:
+    driver: bridge
