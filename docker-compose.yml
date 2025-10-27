@@ -34,6 +34,8 @@ services:
       SPRING_DATASOURCE_PASSWORD: mysecretpassword
       # Ensure Spring uses the correct dialect/driver
       SPRING_JPA_DATABASE-PLATFORM: org.hibernate.dialect.PostgreSQLDialect
+
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
     depends_on:
       - db # Ensure the DB container starts before the app container
     networks:
