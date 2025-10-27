@@ -7,7 +7,7 @@ COPY src ./src
 RUN mvn package -DskipTests
 
 # Stage 2: Runtime Image
-FROM eclipse-temurin:21-jre-slim
+FROM openjdk:21-jdk-slim
 WORKDIR /app
 COPY --from=builder /app/target/*.jar /app/app.jar
 EXPOSE 8080
