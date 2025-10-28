@@ -20,12 +20,24 @@ public class CustomUserDetailsService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
-    // NOTE: This implementation uses the database ID (String version) as the 'username'
-    // in the context of the JWT flow, but can easily be adapted to use the actual username.
+    /**
+     * REQUIRED FOR LOGIN: Loads the user by the actual username string.
+     * The String input here is the literal username provided by the client (e.g., "admin").
+     */
     @Override
     @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String idString) throws UsernameNotFoundException {
-        Long id = Long.parseLong(idString);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        // Find by the actual username, not by trying to parse it as a Long ID.
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+    }
+
+    /**
+     * USED FOR JWT VALIDATION: Loads the user by the numerical ID.
+     * This is needed by the JwtAuthFilter to load the user details after token validation.
+     */
+    @Transactional(readOnly = true)
+    public UserDetails loadUserById(Long id) throws UsernameNotFoundException {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + id));
     }
