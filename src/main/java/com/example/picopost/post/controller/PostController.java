@@ -1,5 +1,6 @@
 package com.example.picopost.post.controller;
 
+import com.example.picopost.auth.model.User;
 import com.example.picopost.post.dto.PostRequest;
 import com.example.picopost.post.dto.PostResponse;
 import com.example.picopost.post.service.PostService;
@@ -27,7 +28,8 @@ public class PostController {
     }
 
     @PostMapping
-    public ResponseEntity<PostResponse> createPost(@RequestBody PostRequest postRequest, @AuthenticationPrincipal Long userId) {
+    public ResponseEntity<PostResponse> createPost(@RequestBody PostRequest postRequest, @AuthenticationPrincipal User user) {
+        Long userId = user.getId();
         PostResponse createdPost = postService.createPost(postRequest, userId);
         return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
     }
