@@ -51,12 +51,12 @@ public class JwtUtils {
     /**
      * Retrieves the user ID (subject) from the JWT.
      */
-    public String getUserIdFromJwt(String token) {
+    public Long getUserIdFromJwt(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-        return claims.getSubject();
+        return Long.parseLong(claims.getSubject());
     }
 }
