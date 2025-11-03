@@ -4,6 +4,7 @@ import com.example.picopost.auth.dto.CredentialRequest;
 import com.example.picopost.auth.dto.AuthResponse;
 import com.example.picopost.auth.service.AuthService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -29,6 +30,7 @@ public class AuthController {
     }
 
     @DeleteMapping("/delete//{userId}")
+    @PreAuthorize("#userId == authentication.principal.id")
     public ResponseEntity<Void> delete(@PathVariable Long userId) {
         authService.deleteUser(userId);
         return ResponseEntity.noContent().build();

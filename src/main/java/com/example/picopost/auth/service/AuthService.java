@@ -5,6 +5,8 @@ import com.example.picopost.auth.repository.UserRepository;
 import com.example.picopost.auth.security.JwtUtils;
 import com.example.picopost.auth.dto.CredentialRequest;
 import com.example.picopost.auth.dto.AuthResponse;
+import com.example.picopost.auth.exception.ResourceNotFoundException;
+import com.example.picopost.auth.exception.DuplicateUsernameException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -56,11 +58,10 @@ public class AuthService {
     }
 
     public User registerUser(CredentialRequest signUpRequest) {
-        // Check if username is already taken
-        Optional<User> existingUser = userRepository.findByUsername(signUpRequest.getUsername());
-        if (existingUser.isPresent()) {
-            throw new RuntimeException("Username is already taken.");
-        }
+
+        userRepository.findByUsername(signUpRequest.getUsername()).ifPresent(u -> {
+            throw new DuplicateUsernameException("Username '" + signUpRequest.getUsername() + "' is already taken");
+        });
 
         // Create new user account
         User newUser = new User();
@@ -72,6 +73,7 @@ public class AuthService {
     }
 
     public void deleteUser(Long userId) {
-        
+        User userToDelete = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
+        userRepository.delete(userToDelete);
     }
 }
