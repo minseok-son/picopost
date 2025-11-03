@@ -19,7 +19,22 @@ services:
     networks:
       - picopost_network
 
-  # 2. Spring Boot Application Service
+  # --- 2. RabbitMQ Message Broker (New Infrastructure) ---
+  rabbitmq:
+    image: rabbitmq:3-management # Includes the web management UI
+    hostname: "rabbitmq"
+    ports:
+      - "5672:5672" # Standard AMQP port for application connection
+      - "15672:15672" # Management UI (access via http://localhost:15672)
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - picopost_network
+
+  # --- 3. Spring Boot Application Service (Monolith) ---
   app:
     build:
       context: . # Build using the Dockerfile in the current directory
@@ -38,6 +53,7 @@ services:
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
     depends_on:
       - db # Ensure the DB container starts before the app container
+      - rabbitmq
     networks:
       - picopost_network
 

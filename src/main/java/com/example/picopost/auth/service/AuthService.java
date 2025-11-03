@@ -3,7 +3,7 @@ package com.example.picopost.auth.service;
 import com.example.picopost.auth.model.User;
 import com.example.picopost.auth.repository.UserRepository;
 import com.example.picopost.auth.security.JwtUtils;
-import com.example.picopost.auth.dto.LoginRequest;
+import com.example.picopost.auth.dto.CredentialRequest;
 import com.example.picopost.auth.dto.AuthResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,7 +33,7 @@ public class AuthService {
         this.jwtUtils = jwtUtils;
     }
 
-    public AuthResponse authenticateUser(LoginRequest loginRequest) {
+    public AuthResponse authenticateUser(CredentialRequest loginRequest) {
         // 1. Authenticate the user
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -55,7 +55,7 @@ public class AuthService {
         return new AuthResponse(jwt, userDetails.getId(), userDetails.getUsername());
     }
 
-    public User registerUser(LoginRequest signUpRequest) {
+    public User registerUser(CredentialRequest signUpRequest) {
         // Check if username is already taken
         Optional<User> existingUser = userRepository.findByUsername(signUpRequest.getUsername());
         if (existingUser.isPresent()) {
@@ -70,5 +70,8 @@ public class AuthService {
         // Save user to the database
         return userRepository.save(newUser);
     }
-    
+
+    public void deleteUser(Long userId) {
+        
+    }
 }
