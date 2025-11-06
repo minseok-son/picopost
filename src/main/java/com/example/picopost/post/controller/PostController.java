@@ -19,10 +19,13 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.util.List;
 
+import org.slf4j.*;
+
 @RestController
 @RequestMapping("/api/v1/posts")
 public class PostController {
     private final PostService postService;
+    private static final Logger log = LoggerFactory.getLogger(PostController.class);
 
     public PostController(PostService postService) {
         this.postService = postService;
@@ -55,6 +58,7 @@ public class PostController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePost(@PathVariable Long id, @AuthenticationPrincipal Long userId) {
+        log.info("Request received to delete post ID: {} by user ID: {}", id, userId); 
         postService.deletePost(id, userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
