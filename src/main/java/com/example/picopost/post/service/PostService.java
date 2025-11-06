@@ -98,10 +98,10 @@ public class PostService {
     @Transactional
     public void deletePost(Long id, Long userId) {
         // Retrieve and authorize (same check as update)
+
+        log.info("Request received to delete post ID: {} by user ID: {}", id, userId); // MOVE LOG HERE)
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new PostNotFoundException("Post not found with ID: " + id));
-        
-        log.info("Request received to delete post ID: {} by user ID: {}", id, userId); // MOVE LOG HERE)
 
         if (!post.getAuthorId().equals(userId)) {
             log.error("AUTHORIZATION DENIED: User ID {} attempted to delete post ID {} (Author ID: {})", 
