@@ -3,7 +3,10 @@ package com.example.picopost.auth.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import com.example.picopost.auth.model.User;
@@ -15,8 +18,15 @@ import java.util.Date;
 public class JwtUtils {
     
     // WARNING: Replace with a secure key loaded from application.properties/environment
-    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512); 
+    @Value("${jwt.secret-key}")
+    private String secretKey;
     private final long expirationMs = 86400000; // 24 hours
+
+    private Key getSigningKey() {
+        // HS512 requires a 64-byte (512-bit) key, so ensure your base64 string is long enough.
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey); 
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
 
     /**
      * Generates a JWT based on the authenticated user.
@@ -30,7 +40,7 @@ public class JwtUtils {
                 .setSubject(userId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + expirationMs))
-                .signWith(key, SignatureAlgorithm.HS512)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
 
@@ -39,7 +49,7 @@ public class JwtUtils {
      */
     public boolean validateToken(String authToken) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(authToken);
+            Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(authToken);
             return true;
         } catch (Exception e) {
             // Log specific JWT exceptions (expired, signature mismatch, etc.)
@@ -53,7 +63,7 @@ public class JwtUtils {
      */
     public Long getUserIdFromJwt(String token) {
         Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
+                .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
