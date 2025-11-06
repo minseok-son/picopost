@@ -24,7 +24,7 @@ public class JwtUtils {
 
     private Key getSigningKey() {
         // HS512 requires a 64-byte (512-bit) key, so ensure your base64 string is long enough.
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey); 
+        byte[] keyBytes = Decoders.BASE64URL.decode(secretKey); 
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
