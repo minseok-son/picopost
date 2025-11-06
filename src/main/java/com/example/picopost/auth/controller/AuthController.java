@@ -29,7 +29,7 @@ public class AuthController {
         return ResponseEntity.ok(userId);
     }
 
-    @DeleteMapping("/delete//{userId}")
+    @DeleteMapping("/delete/{userId}")
     @PreAuthorize("#userId == authentication.principal.id")
     public ResponseEntity<Void> delete(@PathVariable Long userId) {
         authService.deleteUser(userId);
