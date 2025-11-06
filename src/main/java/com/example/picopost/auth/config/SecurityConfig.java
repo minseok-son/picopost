@@ -36,7 +36,7 @@ public class SecurityConfig {
             // 3. Define authorization rules
             .authorizeHttpRequests(auth -> auth
                 // Allow /auth/** (sign-up, sign-in) without authentication
-                .requestMatchers("/auth/register", "/auth/login").permitAll()
+                .requestMatchers("api/v1/auth/**").permitAll()
                 // Require authentication for all other endpoints
                 .anyRequest().authenticated() 
             )
