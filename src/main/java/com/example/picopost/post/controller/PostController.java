@@ -4,6 +4,9 @@ import com.example.picopost.auth.model.User;
 import com.example.picopost.post.dto.PostRequest;
 import com.example.picopost.post.dto.PostResponse;
 import com.example.picopost.post.service.PostService;
+
+import jakarta.annotation.PostConstruct;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -61,5 +64,10 @@ public class PostController {
         log.info("Request received to delete post ID: {} by user ID: {}", id, userId); 
         postService.deletePost(id, userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostConstruct
+    public void testLog() {
+        log.info("Logging is working at INFO level.");
     }
 }
