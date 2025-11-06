@@ -15,8 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @Transactional
 public class AuthService {
@@ -58,7 +56,6 @@ public class AuthService {
     }
 
     public User registerUser(CredentialRequest signUpRequest) {
-
         userRepository.findByUsername(signUpRequest.getUsername()).ifPresent(u -> {
             throw new DuplicateUsernameException("Username '" + signUpRequest.getUsername() + "' is already taken");
         });
