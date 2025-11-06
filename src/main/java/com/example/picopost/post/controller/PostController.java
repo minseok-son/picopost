@@ -60,14 +60,10 @@ public class PostController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long id, @AuthenticationPrincipal Long userId) {
+    public ResponseEntity<Void> deletePost(@PathVariable Long id, @AuthenticationPrincipal User userPrincipal) {
+        Long userId = userPrincipal.getId();
         log.info("Request received to delete post ID: {} by user ID: {}", id, userId); 
         postService.deletePost(id, userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @PostConstruct
-    public void testLog() {
-        log.info("Logging is working at INFO level.");
     }
 }
