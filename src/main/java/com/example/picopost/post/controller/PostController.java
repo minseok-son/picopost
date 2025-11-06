@@ -5,8 +5,6 @@ import com.example.picopost.post.dto.PostRequest;
 import com.example.picopost.post.dto.PostResponse;
 import com.example.picopost.post.service.PostService;
 
-import jakarta.annotation.PostConstruct;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -60,9 +58,9 @@ public class PostController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long id, @AuthenticationPrincipal User userPrincipal) {
-        Long userId = userPrincipal.getId();
-        log.info("Request received to delete post ID: {} by user ID: {}", id, userId); 
+    public ResponseEntity<Void> deletePost(@PathVariable Long id, @AuthenticationPrincipal User user) {
+        Long userId = user.getId();
+        log.info("Request received to delete post ID: {} by user ID: {}", id, userId);
         postService.deletePost(id, userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
