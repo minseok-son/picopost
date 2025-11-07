@@ -1,6 +1,6 @@
 package com.example.picopost.post.controller;
 
-import com.example.picopost.auth.model.User;
+import com.example.picopost.auth.model.UserPrincipal;
 import com.example.picopost.post.dto.PostRequest;
 import com.example.picopost.post.dto.PostResponse;
 import com.example.picopost.post.service.PostService;
@@ -20,20 +20,17 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.util.List;
 
-import org.slf4j.*;
-
 @RestController
 @RequestMapping("/api/v1/posts")
 public class PostController {
     private final PostService postService;
-    private static final Logger log = LoggerFactory.getLogger(PostController.class);
 
     public PostController(PostService postService) {
         this.postService = postService;
     }
 
     @PostMapping
-    public ResponseEntity<PostResponse> createPost(@RequestBody PostRequest postRequest, @AuthenticationPrincipal User user) {
+    public ResponseEntity<PostResponse> createPost(@RequestBody PostRequest postRequest, @AuthenticationPrincipal UserPrincipal user) {
         Long userId = user.getId();
         PostResponse createdPost = postService.createPost(postRequest, userId);
         return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
@@ -58,9 +55,8 @@ public class PostController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long id, @AuthenticationPrincipal User user) {
+    public ResponseEntity<Void> deletePost(@PathVariable Long id, @AuthenticationPrincipal UserPrincipal user) {
         Long userId = user.getId();
-        log.info("Request received to delete post ID: {} by user ID: {}", id, userId);
         postService.deletePost(id, userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

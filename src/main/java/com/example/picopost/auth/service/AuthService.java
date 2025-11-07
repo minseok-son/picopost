@@ -1,12 +1,5 @@
 package com.example.picopost.auth.service;
 
-import com.example.picopost.auth.model.User;
-import com.example.picopost.auth.repository.UserRepository;
-import com.example.picopost.auth.security.JwtUtils;
-import com.example.picopost.auth.dto.CredentialRequest;
-import com.example.picopost.auth.dto.AuthResponse;
-import com.example.picopost.auth.exception.ResourceNotFoundException;
-import com.example.picopost.auth.exception.DuplicateUsernameException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,22 +8,34 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.picopost.auth.dto.AuthResponse;
+import com.example.picopost.auth.dto.CredentialRequest;
+import com.example.picopost.auth.exception.DuplicateUsernameException;
+import com.example.picopost.auth.model.UserPrincipal;
+import com.example.picopost.auth.repository.UserPrincipalRepository;
+import com.example.picopost.auth.security.JwtUtils;
+import com.example.picopost.user.service.UserService;
+
 @Service
 @Transactional
 public class AuthService {
-    private final UserRepository userRepository;
+    private final UserPrincipalRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
+    private final UserService userService;
 
-    public AuthService(UserRepository userRepository,
+
+    public AuthService(UserPrincipalRepository userRepository,
                        PasswordEncoder passwordEncoder,
                        AuthenticationManager authenticationManager,
-                       JwtUtils jwtUtils) {
+                       JwtUtils jwtUtils,
+                       UserService userService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
+        this.userService = userService;
     }
 
     public AuthResponse authenticateUser(CredentialRequest loginRequest) {
@@ -49,28 +54,25 @@ public class AuthService {
         String jwt = jwtUtils.generateToken(authentication);
 
         // 4. Get user details
-        User userDetails = (User) authentication.getPrincipal();
+        UserPrincipal userDetails = (UserPrincipal) authentication.getPrincipal();
 
         // 5. Return AuthResponse with token and user info
         return new AuthResponse(jwt, userDetails.getId(), userDetails.getUsername());
     }
 
-    public User registerUser(CredentialRequest signUpRequest) {
+    public Long registerUser(CredentialRequest signUpRequest) {
         userRepository.findByUsername(signUpRequest.getUsername()).ifPresent(u -> {
             throw new DuplicateUsernameException("Username '" + signUpRequest.getUsername() + "' is already taken");
         });
 
-        // Create new user account
-        User newUser = new User();
-        newUser.setUsername(signUpRequest.getUsername());
-        newUser.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
-
-        // Save user to the database
-        return userRepository.save(newUser);
-    }
-
-    public void deleteUser(Long userId) {
-        User userToDelete = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
-        userRepository.delete(userToDelete);
+        // 2. Security action: HASH THE PASSWORD
+        String hashedPassword = passwordEncoder.encode(signUpRequest.getPassword());
+        
+        // 3. 💥 DELEGATE PERSISTENCE 💥 (Internal synchronous call)
+        // The UserService handles saving the core User entity.
+        Long newUserId = userService.registerUser(signUpRequest.getUsername(), hashedPassword);
+        
+        // 4. Return the new User ID (obtained from the UserService)
+        return newUserId;
     }
 }

@@ -9,7 +9,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-import com.example.picopost.auth.model.User;
+import com.example.picopost.auth.model.UserPrincipal;
 
 import java.security.Key;
 import java.util.Date;
@@ -34,7 +34,7 @@ public class JwtUtils {
     public String generateToken(Authentication authentication) {
         // Here we store the user's ID as a subject. 
         // This is the Long userId you will retrieve later.
-        String userId = ((User) authentication.getPrincipal()).getId().toString();
+        String userId = ((UserPrincipal) authentication.getPrincipal()).getId().toString();
 
         return Jwts.builder()
                 .setSubject(userId)

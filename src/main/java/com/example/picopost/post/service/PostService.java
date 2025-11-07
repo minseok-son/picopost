@@ -14,15 +14,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 @Service // Marks this class as a Spring business service component
 @Transactional(readOnly = true) // Default transaction setting for read operations
 public class PostService {
 
     private final PostRepository postRepository;
-    private static final Logger log = LoggerFactory.getLogger(PostService.class);
 
     // Constructor injection for the PostRepository dependency
     public PostService(PostRepository postRepository) {
@@ -98,14 +94,10 @@ public class PostService {
     @Transactional
     public void deletePost(Long id, Long userId) {
         // Retrieve and authorize (same check as update)
-
-        log.info("Request received to delete post ID: {} by user ID: {}", id, userId); // MOVE LOG HERE)
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new PostNotFoundException("Post not found with ID: " + id));
 
         if (!post.getAuthorId().equals(userId)) {
-            log.error("AUTHORIZATION DENIED: User ID {} attempted to delete post ID {} (Author ID: {})", 
-              userId, id, post.getAuthorId());
             throw new RuntimeException("User is not authorized to delete this post.");
         }
         

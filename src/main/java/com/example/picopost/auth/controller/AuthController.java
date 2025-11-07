@@ -25,14 +25,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<Long> register(@RequestBody CredentialRequest registerRequest) {
-        Long userId = authService.registerUser(registerRequest).getId();
+        Long userId = authService.registerUser(registerRequest);
         return ResponseEntity.ok(userId);
-    }
-
-    @DeleteMapping("/delete/{userId}")
-    @PreAuthorize("#userId == authentication.principal.id")
-    public ResponseEntity<Void> delete(@PathVariable Long userId) {
-        authService.deleteUser(userId);
-        return ResponseEntity.noContent().build();
     }
 }

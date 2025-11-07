@@ -1,6 +1,6 @@
 package com.example.picopost.auth.service;
 
-import com.example.picopost.auth.repository.UserRepository;
+import com.example.picopost.auth.repository.UserPrincipalRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,9 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final UserPrincipalRepository userRepository;
 
-    public CustomUserDetailsService(UserRepository userRepository) {
+    public CustomUserDetailsService(UserPrincipalRepository userRepository) {
         this.userRepository = userRepository;
     }
 
