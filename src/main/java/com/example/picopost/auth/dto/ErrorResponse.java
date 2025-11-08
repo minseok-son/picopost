@@ -2,6 +2,9 @@ package com.example.picopost.auth.dto;
 
 import java.time.Instant;
 
+import lombok.Data;
+
+@Data
 public class ErrorResponse {
 
     private final int statusCode;
