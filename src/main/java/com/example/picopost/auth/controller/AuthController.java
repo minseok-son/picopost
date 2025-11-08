@@ -4,7 +4,6 @@ import com.example.picopost.auth.dto.CredentialRequest;
 import com.example.picopost.auth.dto.AuthResponse;
 import com.example.picopost.auth.service.AuthService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
