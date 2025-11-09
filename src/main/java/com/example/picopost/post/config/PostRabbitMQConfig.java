@@ -1,4 +1,4 @@
-package com.example.picopost.user.config;
+package com.example.picopost.post.config;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class RabbitMQConfig {
+public class PostRabbitMQConfig {
 
     // Name of the exchange where the event will be sent
     public static final String EXCHANGE_NAME = "user.events.exchange";
