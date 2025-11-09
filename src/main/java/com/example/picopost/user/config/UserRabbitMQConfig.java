@@ -9,29 +9,22 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class UserRabbitMQConfig {
-
-    // Name of the exchange where the event will be sent
-    public static final String EXCHANGE_NAME = "user.events.exchange";
     
-    // Name of the queue the Post Service will listen to
-    public static final String POST_DELETE_QUEUE = "post.delete.user"; 
-    
-    // The routing key used to send the message
-    public static final String ROUTING_KEY = "user.deleted";
+    public static final String NOTIFICATION_QUEUE = "user.notification.queue";
+    public static final String NOTIFICATION_ROUTING_KEY = "notification.received";
 
+    // 1. Define the unique queue for the User Service
     @Bean
-    public TopicExchange exchange() {
-        return new TopicExchange(EXCHANGE_NAME);
+    public Queue userNotificationQueue() {
+        return new Queue(NOTIFICATION_QUEUE, true); 
     }
 
+    // 2. Define the unique binding to the central exchange
+    // Spring injects the single TopicExchange bean (defined in RabbitMQCentralConfig)
     @Bean
-    public Queue postDeleteQueue() {
-        return new Queue(POST_DELETE_QUEUE, true);
-    }
-
-    @Bean
-    public Binding postDeleteBinding(Queue postDeletQueue, TopicExchange exchange) {
-        return BindingBuilder.bind(postDeletQueue).to(exchange).with(ROUTING_KEY);
+    public Binding userNotificationBinding(Queue userNotificationQueue, TopicExchange userEventsExchange) {
+        // You would use a different exchange name if listening to a different service's events
+        return BindingBuilder.bind(userNotificationQueue).to(userEventsExchange).with(NOTIFICATION_ROUTING_KEY);
     }
     
 }
