@@ -33,4 +33,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
      * @return A list of posts belonging to that author.
      */
     List<Post> findByAuthorId(Long authorId);
+
+    void deleteAllByUserId(Long userId);
 }
