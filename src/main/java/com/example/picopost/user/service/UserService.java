@@ -4,7 +4,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.picopost.post.config.RabbitMQConfig;
+import com.example.picopost.post.config.PostRabbitMQConfig;
 import com.example.picopost.user.model.User;
 import com.example.picopost.user.repository.UserRepository;
 
@@ -33,8 +33,8 @@ public class UserService {
         String message = String.valueOf(userId);
 
         rabbitTemplate.convertAndSend(
-            RabbitMQConfig.EXCHANGE_NAME,
-            RabbitMQConfig.ROUTING_KEY,
+            PostRabbitMQConfig.EXCHANGE_NAME,
+            PostRabbitMQConfig.ROUTING_KEY,
             message
         );
     }

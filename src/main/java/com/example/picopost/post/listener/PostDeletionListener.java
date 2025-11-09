@@ -3,7 +3,7 @@ package com.example.picopost.post.listener;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
-import com.example.picopost.post.config.RabbitMQConfig;
+import com.example.picopost.post.config.PostRabbitMQConfig;
 import com.example.picopost.post.repository.PostRepository;
 
 import jakarta.transaction.Transactional;
@@ -17,7 +17,7 @@ public class PostDeletionListener {
         this.postRepository = postRepository;
     }
 
-    @RabbitListener(queues = RabbitMQConfig.POST_DELETE_QUEUE)
+    @RabbitListener(queues = PostRabbitMQConfig.POST_DELETE_QUEUE)
     @Transactional
     public void handleUserDeletion(String userIdString) {
         try {
