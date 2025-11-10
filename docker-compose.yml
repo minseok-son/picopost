@@ -51,6 +51,9 @@ services:
       SPRING_JPA_DATABASE-PLATFORM: org.hibernate.dialect.PostgreSQLDialect
 
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
     depends_on:
       - db # Ensure the DB container starts before the app container
       - rabbitmq
