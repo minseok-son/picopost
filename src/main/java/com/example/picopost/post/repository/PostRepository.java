@@ -2,7 +2,10 @@ package com.example.picopost.post.repository;
 
 import com.example.picopost.post .model.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -34,5 +37,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
      */
     List<Post> findByAuthorId(Long authorId);
 
-    void deleteAllByUserId(Long userId);
+    void deleteAllByAuthorId(Long authorId);
 }

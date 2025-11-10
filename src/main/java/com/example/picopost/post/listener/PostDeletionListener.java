@@ -23,7 +23,7 @@ public class PostDeletionListener {
         try {
             Long userId = Long.parseLong(userIdString);
 
-            postRepository.deleteAllByUserId(userId);
+            postRepository.deleteAllByAuthorId(userId);
         } catch (NumberFormatException e) {
 
         }
