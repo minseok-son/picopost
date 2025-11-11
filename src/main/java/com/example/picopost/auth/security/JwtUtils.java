@@ -17,13 +17,11 @@ import java.util.Date;
 @Component
 public class JwtUtils {
     
-    // WARNING: Replace with a secure key loaded from application.properties/environment
     @Value("${jwt.secret-key}")
     private String secretKey;
     private final long expirationMs = 86400000; // 24 hours
 
     private Key getSigningKey() {
-        // HS512 requires a 64-byte (512-bit) key, so ensure your base64 string is long enough.
         byte[] keyBytes = Decoders.BASE64URL.decode(secretKey); 
         return Keys.hmacShaKeyFor(keyBytes);
     }

@@ -25,7 +25,6 @@ public class AuthService {
     private final JwtUtils jwtUtils;
     private final UserService userService;
 
-
     public AuthService(UserPrincipalRepository userRepository,
                        PasswordEncoder passwordEncoder,
                        AuthenticationManager authenticationManager,
@@ -67,9 +66,6 @@ public class AuthService {
 
         // 2. Security action: HASH THE PASSWORD
         String hashedPassword = passwordEncoder.encode(signUpRequest.getPassword());
-        
-        // 3. 💥 DELEGATE PERSISTENCE 💥 (Internal synchronous call)
-        // The UserService handles saving the core User entity.
         Long newUserId = userService.registerUser(signUpRequest.getUsername(), hashedPassword);
         
         // 4. Return the new User ID (obtained from the UserService)
